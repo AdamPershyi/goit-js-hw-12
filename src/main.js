@@ -16,6 +16,7 @@ const loadMoreBtn = document.getElementById('load-more-btn');
 let currentQuery = '';
 let currentPage = 1;
 let totalHits = 0;
+let isLoading = false;
 
 function smoothScroll() {
   const galleryItem = document.querySelector('.gallery-item');
@@ -41,10 +42,16 @@ function checkEndOfCollection() {
 }
 
 async function searchImages(isNewSearch = true) {
+  if (isLoading) return;
+
+  isLoading = true;
+
   if (isNewSearch) {
     currentPage = 1;
     hideLoadMoreButton();
     clearGallery();
+  } else {
+    hideLoadMoreButton();
   }
 
   showLoader();
@@ -83,6 +90,7 @@ async function searchImages(isNewSearch = true) {
     });
   } finally {
     hideLoader();
+    isLoading = false;
   }
 }
 
@@ -105,6 +113,7 @@ form.addEventListener('submit', async event => {
 });
 
 loadMoreBtn.addEventListener('click', async () => {
+  if (isLoading) return;
   currentPage++;
   await searchImages(false);
 });
